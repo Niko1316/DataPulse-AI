@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, Play, Shield } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import { useTranslations } from 'next-intl';
 
 const floatingCards = [
   {
@@ -36,6 +37,7 @@ const floatingCards = [
 ];
 
 export default function Hero() {
+  const t = useTranslations()
   return (
     <section
       className="relative min-h-screen flex items-center overflow-hidden"
@@ -126,7 +128,7 @@ export default function Hero() {
             }}
           >
             <Shield size={14} />
-            Trusted by 500+ B2B marketers
+            {t('hero.badge')}
           </div>
 
           {/* Headline */}
@@ -134,32 +136,19 @@ export default function Hero() {
             className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight mb-6"
             style={{ color: '#e5e5e5' }}
           >
-            Raw Data to{' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Authority Content
-            </span>{' '}
-            in 60 Seconds
+            {t('hero.title')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl leading-relaxed mb-10 max-w-2xl" style={{ color: '#a0a0a0' }}>
-            Upload your research PDFs, analyst reports, and whitepapers. DataPulse AI extracts the
-            insights, traces every claim, and publishes polished LinkedIn posts, Twitter threads, and
-            newsletters — in English, French, and Spanish.
+            {t('hero.subtitle')}
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/signup">
               <Button size="lg" variant="primary" className="w-full sm:w-auto">
-                Start Free — No Credit Card
+                {t('hero.cta')}
                 <ArrowRight size={18} />
               </Button>
             </Link>
@@ -180,7 +169,7 @@ export default function Hero() {
               }}
             >
               <Play size={16} />
-              View Sample Output
+              {t('hero.cta2')}
             </button>
           </div>
 

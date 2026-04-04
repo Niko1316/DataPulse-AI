@@ -2,37 +2,23 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Upload, Brain, Share2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-const steps = [
-  {
-    number: '01',
-    icon: Upload,
-    title: 'Upload Your Report',
-    description:
-      'Drag and drop any PDF — analyst research, whitepapers, internal studies, or market reports up to 50MB. We support multi-file batch uploads too.',
-  },
-  {
-    number: '02',
-    icon: Brain,
-    title: 'AI Analyzes & Extracts',
-    description:
-      'Our engine reads every page, identifies key statistics, traces claims to their source, and structures the data into high-impact content frameworks.',
-  },
-  {
-    number: '03',
-    icon: Share2,
-    title: 'Distribute Everywhere',
-    description:
-      'Publish polished LinkedIn posts, Twitter threads, and email newsletters simultaneously — in up to three languages — directly from your dashboard.',
-  },
-];
+const stepIcons = [Upload, Brain, Share2];
+const stepNumbers = ['01', '02', '03'];
 
 function StepCard({
-  step,
+  icon: Icon,
+  number,
+  title,
+  description,
   index,
   isLast,
 }: {
-  step: (typeof steps)[0];
+  icon: typeof Upload;
+  number: string;
+  title: string;
+  description: string;
   index: number;
   isLast: boolean;
 }) {
@@ -54,8 +40,6 @@ function StepCard({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  const Icon = step.icon;
 
   return (
     <div className="relative flex flex-col items-center" ref={ref}>
@@ -115,13 +99,13 @@ function StepCard({
           className="text-xs font-mono font-bold tracking-widest mb-2"
           style={{ color: '#7b2ff7' }}
         >
-          STEP {step.number}
+          STEP {number}
         </p>
         <h3 className="text-xl font-bold mb-3" style={{ color: '#e5e5e5' }}>
-          {step.title}
+          {title}
         </h3>
         <p className="text-sm leading-relaxed" style={{ color: '#a0a0a0' }}>
-          {step.description}
+          {description}
         </p>
       </div>
     </div>
@@ -129,6 +113,29 @@ function StepCard({
 }
 
 export default function HowItWorks() {
+  const t = useTranslations('howItWorks');
+
+  const steps = [
+    {
+      icon: stepIcons[0],
+      number: stepNumbers[0],
+      title: t('step1Title'),
+      description: t('step1Desc'),
+    },
+    {
+      icon: stepIcons[1],
+      number: stepNumbers[1],
+      title: t('step2Title'),
+      description: t('step2Desc'),
+    },
+    {
+      icon: stepIcons[2],
+      number: stepNumbers[2],
+      title: t('step3Title'),
+      description: t('step3Desc'),
+    },
+  ];
+
   return (
     <section className="py-24 relative" style={{ background: '#0a0a0a' }}>
       {/* Section divider glow */}
@@ -145,7 +152,7 @@ export default function HowItWorks() {
             className="text-xs font-mono font-bold tracking-widest uppercase mb-4"
             style={{ color: '#00d4ff' }}
           >
-            How It Works
+            {t('title')}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: '#e5e5e5' }}>
             Three steps from PDF to pipeline
@@ -158,7 +165,15 @@ export default function HowItWorks() {
         {/* Steps */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8">
           {steps.map((step, i) => (
-            <StepCard key={step.number} step={step} index={i} isLast={i === steps.length - 1} />
+            <StepCard
+              key={step.number}
+              icon={step.icon}
+              number={step.number}
+              title={step.title}
+              description={step.description}
+              index={i}
+              isLast={i === steps.length - 1}
+            />
           ))}
         </div>
       </div>
