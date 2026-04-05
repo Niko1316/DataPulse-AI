@@ -2,7 +2,9 @@ import { inngest } from '../client'
 import Anthropic from '@anthropic-ai/sdk'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+function getAnthropic() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+}
 
 export const processPDF = inngest.createFunction(
   { id: 'process-pdf-to-social', retries: 3, concurrency: { limit: 5 }, triggers: [{ event: 'pdf/uploaded' }] },
@@ -30,7 +32,7 @@ export const processPDF = inngest.createFunction(
       const langList = (languages as string[]).join(', ')
       const platformList = (platforms as string[]).join(', ')
 
-      const response = await anthropic.messages.create({
+      const response = await getAnthropic().messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8192,
         system: `You are an expert B2B content strategist and document intelligence analyst. Your task is to transform a PDF document into a complete, publish-ready social media content pack.
