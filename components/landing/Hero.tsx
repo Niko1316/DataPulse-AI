@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Play, Shield } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { useTranslations } from 'next-intl';
+import { SampleOutputModal } from '@/components/landing/SampleOutputModal';
 
 const floatingCards = [
   {
@@ -38,7 +40,10 @@ const floatingCards = [
 
 export default function Hero() {
   const t = useTranslations()
+  const [showSample, setShowSample] = useState(false)
   return (
+    <>
+    <SampleOutputModal open={showSample} onClose={() => setShowSample(false)} />
     <section
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: '#0a0a0a' }}
@@ -153,6 +158,7 @@ export default function Hero() {
               </Button>
             </Link>
             <button
+              onClick={() => setShowSample(true)}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-base font-semibold transition-all duration-200"
               style={{
                 background: 'transparent',
@@ -189,6 +195,7 @@ export default function Hero() {
         }
       `}</style>
     </section>
+    </>
   );
 }
 

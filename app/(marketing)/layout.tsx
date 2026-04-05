@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { LanguageSwitcher } from '@/components/app/LanguageSwitcher'
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             >
               Start Free
             </Link>
+            <LanguageSwitcher />
           </div>
         </div>
       </nav>
