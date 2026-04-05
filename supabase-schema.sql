@@ -146,6 +146,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+CREATE OR REPLACE FUNCTION deduct_credit(p_user_id UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE credits
+  SET balance = balance - 1, updated_at = now()
+  WHERE user_id = p_user_id AND balance > 0;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Insufficient credits';
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- ================================================
 -- PROJECTS
 -- ================================================

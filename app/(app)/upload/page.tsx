@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { UploadZone } from '@/components/app/UploadZone'
-import { Loader2, ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { Loader2, ArrowLeft, ArrowRight, Check, Lock } from 'lucide-react'
 
 const steps = ['Upload', 'Configure', 'Processing', 'Results']
 
@@ -43,6 +43,25 @@ const processingMessages = [
   'Finalizing your authority pack...',
 ]
 
+type PlanInfo = {
+  planId: string
+  limits: { pdfsPerMonth: number; maxFileSizeMB: number; platforms: number; languages: number; brandVoices: number }
+  features: string[]
+  usage: { pdfsUsed: number; pdfsLimit: number; credits: number }
+}
+
+// Map plan to allowed platforms/languages
+function getAllowedPlatforms(planId: string): string[] {
+  if (planId === 'free') return ['linkedin']
+  if (planId === 'starter') return ['linkedin', 'twitter']
+  return ['linkedin', 'twitter', 'instagram', 'infographic']
+}
+
+function getAllowedLanguages(planId: string): string[] {
+  if (planId === 'free' || planId === 'starter') return ['en']
+  return ['en', 'fr', 'es']
+}
+
 export default function UploadPage() {
   const router = useRouter()
   const [step, setStep] = useState(0)
@@ -50,6 +69,7 @@ export default function UploadPage() {
   const [uploading, setUploading] = useState(false)
   const [projectId, setProjectId] = useState('')
   const [processingMsg, setProcessingMsg] = useState(0)
+  const [planInfo, setPlanInfo] = useState<PlanInfo | null>(null)
 
   // Config state
   const [objective, setObjective] = useState('thought_leadership')
@@ -59,6 +79,16 @@ export default function UploadPage() {
   const [languages, setLanguages] = useState(['en'])
   const [cta, setCta] = useState('')
   const [brandName, setBrandName] = useState('')
+
+  useEffect(() => {
+    fetch('/api/me/plan').then(r => r.json()).then(data => {
+      if (data.planId) setPlanInfo(data)
+    }).catch(() => {})
+  }, [])
+
+  const allowedPlatforms = planInfo ? getAllowedPlatforms(planInfo.planId) : ['linkedin']
+  const allowedLanguages = planInfo ? getAllowedLanguages(planInfo.planId) : ['en']
+  const maxFileSizeMB = planInfo?.limits.maxFileSizeMB ?? 10
 
   function toggleArray(arr: string[], value: string, setter: (v: string[]) => void) {
     setter(arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value])
@@ -164,7 +194,16 @@ export default function UploadPage() {
       {/* Step 0: Upload */}
       {step === 0 && (
         <div className="space-y-6">
-          <UploadZone maxSizeMB={50} onFileSelect={setFile} uploading={uploading} />
+          {planInfo && planInfo.usage.pdfsUsed >= planInfo.usage.pdfsLimit && planInfo.usage.credits <= 0 && (
+            <div className="rounded-lg p-4 mb-4" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              <p className="text-sm" style={{ color: '#ef4444' }}>
+                You&apos;ve used all {planInfo.usage.pdfsLimit} PDFs this month.{' '}
+                <a href="/billing" className="underline font-medium">Buy credit packs</a> or{' '}
+                <a href="/pricing" className="underline font-medium">upgrade your plan</a>.
+              </p>
+            </div>
+          )}
+          <UploadZone maxSizeMB={maxFileSizeMB} onFileSelect={setFile} uploading={uploading} />
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
@@ -243,40 +282,52 @@ export default function UploadPage() {
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: '#a0a0a0' }}>Platforms</label>
             <div className="grid grid-cols-2 gap-2">
-              {platformOptions.map(p => (
-                <button
-                  key={p.value}
-                  onClick={() => toggleArray(platforms, p.value, setPlatforms)}
-                  className="px-4 py-2.5 rounded-lg border text-sm transition-colors"
-                  style={{
-                    borderColor: platforms.includes(p.value) ? '#7b2ff7' : '#222',
-                    background: platforms.includes(p.value) ? 'rgba(123,47,247,0.05)' : '#141414',
-                    color: platforms.includes(p.value) ? '#7b2ff7' : '#a0a0a0',
-                  }}
-                >
-                  {p.label}
-                </button>
-              ))}
+              {platformOptions.map(p => {
+                const locked = !allowedPlatforms.includes(p.value)
+                return (
+                  <button
+                    key={p.value}
+                    onClick={() => !locked && toggleArray(platforms, p.value, setPlatforms)}
+                    disabled={locked}
+                    className="px-4 py-2.5 rounded-lg border text-sm transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{
+                      borderColor: locked ? '#1a1a1a' : platforms.includes(p.value) ? '#7b2ff7' : '#222',
+                      background: locked ? '#0f0f0f' : platforms.includes(p.value) ? 'rgba(123,47,247,0.05)' : '#141414',
+                      color: locked ? '#555' : platforms.includes(p.value) ? '#7b2ff7' : '#a0a0a0',
+                    }}
+                  >
+                    {locked && <Lock className="w-3 h-3" />}
+                    {p.label}
+                    {locked && <span className="text-xs">(upgrade)</span>}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: '#a0a0a0' }}>Languages</label>
             <div className="flex gap-2">
-              {[{ v: 'en', l: 'English' }, { v: 'fr', l: 'Français' }, { v: 'es', l: 'Español' }].map(lang => (
-                <button
-                  key={lang.v}
-                  onClick={() => toggleArray(languages, lang.v, setLanguages)}
-                  className="px-4 py-2.5 rounded-lg border text-sm transition-colors"
-                  style={{
-                    borderColor: languages.includes(lang.v) ? '#7b2ff7' : '#222',
-                    background: languages.includes(lang.v) ? 'rgba(123,47,247,0.05)' : '#141414',
-                    color: languages.includes(lang.v) ? '#7b2ff7' : '#a0a0a0',
-                  }}
-                >
-                  {lang.l}
-                </button>
-              ))}
+              {[{ v: 'en', l: 'English' }, { v: 'fr', l: 'Français' }, { v: 'es', l: 'Español' }].map(lang => {
+                const locked = !allowedLanguages.includes(lang.v)
+                return (
+                  <button
+                    key={lang.v}
+                    onClick={() => !locked && toggleArray(languages, lang.v, setLanguages)}
+                    disabled={locked}
+                    className="px-4 py-2.5 rounded-lg border text-sm transition-colors flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{
+                      borderColor: locked ? '#1a1a1a' : languages.includes(lang.v) ? '#7b2ff7' : '#222',
+                      background: locked ? '#0f0f0f' : languages.includes(lang.v) ? 'rgba(123,47,247,0.05)' : '#141414',
+                      color: locked ? '#555' : languages.includes(lang.v) ? '#7b2ff7' : '#a0a0a0',
+                    }}
+                  >
+                    {locked && <Lock className="w-3 h-3" />}
+                    {lang.l}
+                    {locked && <span className="text-xs">(upgrade)</span>}
+                  </button>
+                )
+              })}
             </div>
           </div>
 

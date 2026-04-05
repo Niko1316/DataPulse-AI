@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, X, Zap } from 'lucide-react';
+import { Check, X, Zap, Loader2 } from 'lucide-react';
 import { PLANS, CREDIT_PACKS } from '@/lib/stripe/plans';
 
 const FEATURE_LABELS: Record<string, string> = {
@@ -32,6 +32,62 @@ function formatPrice(cents: number): string {
 
 export default function Pricing() {
   const [yearly, setYearly] = useState(false);
+  const [loadingPack, setLoadingPack] = useState<number | null>(null);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  async function handleSubscribe(priceId: string, planId: string) {
+    if (!priceId) {
+      window.location.href = '/signup?plan=' + planId;
+      return;
+    }
+    setLoadingPlan(planId);
+    try {
+      const res = await fetch('/api/checkout/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else if (res.status === 401) {
+        window.location.href = '/signup?plan=' + planId;
+      } else {
+        alert(data.error || 'Something went wrong');
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
+
+  async function handleBuyCredits(priceId: string, credits: number) {
+    if (!priceId) {
+      window.location.href = '/signup';
+      return;
+    }
+    setLoadingPack(credits);
+    try {
+      const res = await fetch('/api/checkout/credits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, credits }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else if (res.status === 401) {
+        window.location.href = '/signup';
+      } else {
+        alert(data.error || 'Something went wrong');
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoadingPack(null);
+    }
+  }
 
   return (
     <section className="py-24 relative" style={{ background: '#0a0a0a' }}>
@@ -210,9 +266,17 @@ export default function Pricing() {
                 </ul>
 
                 {/* CTA */}
-                <a
-                  href={planId === 'free' ? '/signup' : '/signup?plan=' + planId}
-                  className="block text-center rounded-lg py-2.5 text-sm font-bold transition-all duration-200"
+                <button
+                  onClick={() => {
+                    if (planId === 'free') {
+                      window.location.href = '/signup';
+                    } else {
+                      const priceId = yearly ? plan.priceIds.yearly : plan.priceIds.monthly;
+                      handleSubscribe(priceId, planId);
+                    }
+                  }}
+                  disabled={loadingPlan === planId}
+                  className="block w-full text-center rounded-lg py-2.5 text-sm font-bold transition-all duration-200 disabled:opacity-60"
                   style={
                     isPro
                       ? {
@@ -240,8 +304,10 @@ export default function Pricing() {
                     e.currentTarget.style.opacity = '1';
                   }}
                 >
-                  {planId === 'free' ? 'Get Started Free' : 'Choose ' + plan.name.en}
-                </a>
+                  {loadingPlan === planId ? (
+                    <Loader2 className="w-4 h-4 animate-spin inline" />
+                  ) : planId === 'free' ? 'Get Started Free' : 'Choose ' + plan.name.en}
+                </button>
               </div>
             );
           })}
@@ -295,17 +361,20 @@ export default function Pricing() {
                 <p className="text-xs mb-5" style={{ color: '#a0a0a0' }}>
                   {formatPrice(Math.round(pack.price / pack.credits))} per PDF
                 </p>
-                <a
-                  href="/signup"
-                  className="w-full text-center rounded-lg py-2 text-sm font-bold transition-all duration-200"
+                <button
+                  onClick={() => handleBuyCredits(pack.priceId, pack.credits)}
+                  disabled={loadingPack === pack.credits}
+                  className="w-full text-center rounded-lg py-2 text-sm font-bold transition-all duration-200 disabled:opacity-60"
                   style={{
                     background: 'rgba(0,212,255,0.08)',
                     border: '1px solid rgba(0,212,255,0.2)',
                     color: '#00d4ff',
                   }}
                 >
-                  Buy Pack
-                </a>
+                  {loadingPack === pack.credits ? (
+                    <Loader2 className="w-4 h-4 animate-spin inline" />
+                  ) : 'Buy Pack'}
+                </button>
               </div>
             ))}
           </div>
