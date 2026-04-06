@@ -16,6 +16,7 @@ export async function updateSession(request: NextRequest) {
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
+    `frame-ancestors 'none'`,
   ].join('; ')
 
   // Clone request headers and attach the nonce so server components can read it

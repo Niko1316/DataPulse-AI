@@ -120,7 +120,7 @@ export default function Features() {
             className="text-xs font-mono font-bold tracking-widest uppercase mb-4"
             style={{ color: '#7b2ff7' }}
           >
-            Platform Features
+            {t('sectionLabel')}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: '#e5e5e5' }}>
             {t('title')}

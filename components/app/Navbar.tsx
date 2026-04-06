@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { LogOut, Settings, CreditCard } from 'lucide-react'
 import { useState } from 'react'
 import { LanguageSwitcher } from '@/components/app/LanguageSwitcher'
+import { Logo } from '@/components/ui/Logo'
 
 export function Navbar({ user }: { user: { email?: string; full_name?: string } }) {
   const router = useRouter()
@@ -19,7 +20,10 @@ export function Navbar({ user }: { user: { email?: string; full_name?: string } 
 
   return (
     <nav className="sticky top-0 z-40 border-b h-16 flex items-center px-4 lg:px-8" style={{ background: 'rgba(10,10,10,0.95)', backdropFilter: 'blur(12px)', borderColor: '#222' }}>
-      <Link href="/dashboard" className="text-lg font-bold gradient-text mr-auto">DataPulse AI</Link>
+      <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold gradient-text mr-auto">
+        <Logo size={28} />
+        DataPulse AI
+      </Link>
 
       <div className="flex items-center gap-3">
         <LanguageSwitcher />

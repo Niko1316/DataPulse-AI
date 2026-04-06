@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
     .from('projects')
     .insert({
       user_id: user.id,
+      name: fileName.replace(/\.pdf$/i, ''),
       file_name: fileName,
       file_size: fileSize,
       status: 'pending',

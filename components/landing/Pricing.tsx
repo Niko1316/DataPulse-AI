@@ -3,25 +3,7 @@
 import { useState } from 'react';
 import { Check, X, Zap, Loader2 } from 'lucide-react';
 import { PLANS, CREDIT_PACKS } from '@/lib/stripe/plans';
-
-const FEATURE_LABELS: Record<string, string> = {
-  pdf_upload: '2 PDFs / month',
-  linkedin_only: 'LinkedIn only',
-  english_only: 'English only',
-  linkedin: 'LinkedIn posts',
-  twitter: 'Twitter / X threads',
-  basic_analytics: 'Basic analytics',
-  all_platforms: 'All 3 platforms',
-  trilingual: 'EN / FR / ES content',
-  brand_voice: '1 brand voice profile',
-  advanced_analytics: 'Advanced analytics',
-  calendar_export: 'Calendar export',
-  api_access: 'API access',
-  bulk_upload: 'Bulk upload',
-  white_label: 'White-label exports',
-  approval_workflow: 'Team approval workflow',
-  '5_brand_voices': '5 brand voice profiles',
-};
+import { useTranslations } from 'next-intl';
 
 const PLAN_ORDER = ['free', 'starter', 'professional', 'business'] as const;
 
@@ -31,6 +13,7 @@ function formatPrice(cents: number): string {
 }
 
 export default function Pricing() {
+  const t = useTranslations('pricing');
   const [yearly, setYearly] = useState(false);
   const [loadingPack, setLoadingPack] = useState<number | null>(null);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
@@ -105,13 +88,13 @@ export default function Pricing() {
             className="text-xs font-mono font-bold tracking-widest uppercase mb-4"
             style={{ color: '#00d4ff' }}
           >
-            Pricing
+            {t('sectionLabel')}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: '#e5e5e5' }}>
-            Start free. Scale as you grow.
+            {t('heading')}
           </h2>
           <p className="text-lg max-w-xl mx-auto mb-8" style={{ color: '#a0a0a0' }}>
-            No contracts, no surprises. Upgrade, downgrade, or cancel anytime.
+            {t('description')}
           </p>
 
           {/* Monthly / Yearly toggle */}
@@ -120,7 +103,7 @@ export default function Pricing() {
               className="text-sm font-semibold"
               style={{ color: yearly ? '#a0a0a0' : '#e5e5e5' }}
             >
-              Monthly
+              {t('monthly')}
             </span>
             <button
               onClick={() => setYearly((v) => !v)}
@@ -144,7 +127,7 @@ export default function Pricing() {
               className="text-sm font-semibold"
               style={{ color: yearly ? '#e5e5e5' : '#a0a0a0' }}
             >
-              Yearly
+              {t('yearly')}
             </span>
             {yearly && (
               <span
@@ -155,7 +138,7 @@ export default function Pricing() {
                   color: '#00d4ff',
                 }}
               >
-                Save ~20%
+                {t('savePct')}
               </span>
             )}
           </div>
@@ -192,7 +175,7 @@ export default function Pricing() {
                         color: '#0a0a0a',
                       }}
                     >
-                      {plan.badge}
+                      {t('popular')}
                     </span>
                   </div>
                 )}
@@ -212,13 +195,13 @@ export default function Pricing() {
                   </span>
                   {price > 0 && (
                     <span className="text-sm mb-1.5" style={{ color: '#a0a0a0' }}>
-                      / mo
+                      {t('perMo')}
                     </span>
                   )}
                 </div>
                 {yearly && price > 0 && (
                   <p className="text-xs mb-4" style={{ color: '#a0a0a0' }}>
-                    billed annually ({formatPrice(price * 12)} / yr)
+                    {t('billedAnnually')} ({formatPrice(price * 12)} {t('perYear')})
                   </p>
                 )}
                 {(!yearly || price === 0) && <div className="mb-4" />}
@@ -232,20 +215,20 @@ export default function Pricing() {
                     <span style={{ color: '#e5e5e5', fontWeight: 700 }}>
                       {plan.limits.pdfsPerMonth}
                     </span>{' '}
-                    PDFs / month
+                    {t('pdfsPerMonth')}
                   </p>
                   <p style={{ color: '#a0a0a0' }}>
-                    Up to{' '}
+                    {t('upTo')}{' '}
                     <span style={{ color: '#e5e5e5', fontWeight: 700 }}>
                       {plan.limits.maxFileSizeMB}MB
                     </span>{' '}
-                    per file
+                    {t('perFile')}
                   </p>
                   <p style={{ color: '#a0a0a0' }}>
                     <span style={{ color: '#e5e5e5', fontWeight: 700 }}>
                       {plan.limits.teamMembers}
                     </span>{' '}
-                    team member{plan.limits.teamMembers > 1 ? 's' : ''}
+                    {plan.limits.teamMembers > 1 ? t('teamMembers') : t('teamMember')}
                   </p>
                 </div>
 
@@ -259,7 +242,7 @@ export default function Pricing() {
                         style={{ color: isPro ? '#7b2ff7' : '#00d4ff' }}
                       />
                       <span style={{ color: '#a0a0a0' }}>
-                        {FEATURE_LABELS[f] ?? f}
+                        {t(`feature_${f}`)}
                       </span>
                     </li>
                   ))}
@@ -306,7 +289,7 @@ export default function Pricing() {
                 >
                   {loadingPlan === planId ? (
                     <Loader2 className="w-4 h-4 animate-spin inline" />
-                  ) : planId === 'free' ? 'Get Started Free' : 'Choose ' + plan.name.en}
+                  ) : planId === 'free' ? t('getStartedFree') : t('choose') + ' ' + plan.name.en}
                 </button>
               </div>
             );
@@ -319,11 +302,11 @@ export default function Pricing() {
             <div className="inline-flex items-center gap-2 mb-3">
               <Zap size={18} style={{ color: '#00d4ff' }} />
               <h3 className="text-xl font-black" style={{ color: '#e5e5e5' }}>
-                Need more PDFs? Top up with Credit Packs
+                {t('creditPacksHeading')}
               </h3>
             </div>
             <p className="text-sm" style={{ color: '#a0a0a0' }}>
-              One-time purchases. Credits never expire. Stack on top of any plan.
+              {t('creditPacksDesc')}
             </p>
           </div>
 
@@ -352,14 +335,14 @@ export default function Pricing() {
                 <p className="text-3xl font-black mb-1" style={{ color: '#e5e5e5' }}>
                   {pack.credits}
                   <span className="text-base font-semibold ml-1" style={{ color: '#a0a0a0' }}>
-                    credits
+                    {t('credits')}
                   </span>
                 </p>
                 <p className="text-xl font-bold mb-4" style={{ color: '#e5e5e5' }}>
                   {formatPrice(pack.price)}
                 </p>
                 <p className="text-xs mb-5" style={{ color: '#a0a0a0' }}>
-                  {formatPrice(Math.round(pack.price / pack.credits))} per PDF
+                  {formatPrice(Math.round(pack.price / pack.credits))} {t('perPdf')}
                 </p>
                 <button
                   onClick={() => handleBuyCredits(pack.priceId, pack.credits)}
@@ -373,7 +356,7 @@ export default function Pricing() {
                 >
                   {loadingPack === pack.credits ? (
                     <Loader2 className="w-4 h-4 animate-spin inline" />
-                  ) : 'Buy Pack'}
+                  ) : t('buyPack')}
                 </button>
               </div>
             ))}

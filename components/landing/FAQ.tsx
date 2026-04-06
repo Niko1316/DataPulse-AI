@@ -70,13 +70,13 @@ export default function FAQ() {
             className="text-xs font-mono font-bold tracking-widest uppercase mb-4"
             style={{ color: '#00d4ff' }}
           >
-            FAQ
+            {t('sectionLabel')}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: '#e5e5e5' }}>
-            Everything you need to know
+            {t('heading')}
           </h2>
           <p className="text-lg" style={{ color: '#a0a0a0' }}>
-            Not covered here?{' '}
+            {t('notCovered')}{' '}
             <a
               href="mailto:hello@datapulse.ai"
               className="transition-colors duration-200"
@@ -84,7 +84,7 @@ export default function FAQ() {
               onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#7b2ff7')}
               onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#00d4ff')}
             >
-              Email us directly.
+              {t('emailUs')}
             </a>
           </p>
         </div>

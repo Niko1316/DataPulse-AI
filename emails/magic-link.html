@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to DataPulse AI</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;">
+
+          <!-- Logo -->
+          <tr>
+            <td align="center" style="padding-bottom:32px;">
+              <svg width="48" height="48" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="200" rx="40" fill="#0B0D12"/>
+                <defs>
+                  <linearGradient id="pg" x1="40" y1="40" x2="160" y2="160" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#00C6FF"/>
+                    <stop offset="100%" stop-color="#8B5CF6"/>
+                  </linearGradient>
+                </defs>
+                <path d="M60 50C60 44.4772 64.4772 40 70 40H110C137.614 40 160 62.3858 160 90V110C160 137.614 137.614 160 110 160H70C64.4772 160 60 155.523 60 150V50Z" stroke="url(#pg)" stroke-width="12" fill="none"/>
+                <path d="M50 100H85L95 75L110 125L120 100H155" stroke="url(#pg)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p style="margin:12px 0 0;font-size:20px;font-weight:800;letter-spacing:-0.02em;">
+                <span style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">DataPulse AI</span>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background-color:#141414;border:1px solid #222;border-radius:16px;padding:40px 32px;">
+
+              <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#e5e5e5;text-align:center;">
+                Sign in to DataPulse AI
+              </h1>
+              <p style="margin:0 0 32px;font-size:14px;color:#a0a0a0;text-align:center;line-height:1.6;">
+                Click the button below to securely sign in to your account. This link expires in 1 hour.
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <a href="{{ .ConfirmationURL }}"
+                       style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#0a0a0a;font-size:14px;font-weight:700;text-decoration:none;border-radius:10px;">
+                      Sign In Securely
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <hr style="border:none;border-top:1px solid #222;margin:32px 0;" />
+
+              <p style="margin:0;font-size:12px;color:#666;text-align:center;line-height:1.6;">
+                If you didn't request this, you can safely ignore this email.<br/>
+                <a href="{{ .ConfirmationURL }}" style="color:#00d4ff;word-break:break-all;">{{ .ConfirmationURL }}</a>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 0;text-align:center;">
+              <p style="margin:0 0 8px;font-size:11px;color:#444;">
+                DataPulse AI — Turn data into authority content.
+              </p>
+              <p style="margin:0;font-size:11px;color:#333;">
+                &copy; 2026 DataPulse AI. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

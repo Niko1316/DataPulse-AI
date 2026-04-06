@@ -155,10 +155,10 @@ export default function HowItWorks() {
             {t('title')}
           </p>
           <h2 className="text-3xl sm:text-4xl font-black mb-4" style={{ color: '#e5e5e5' }}>
-            Three steps from PDF to pipeline
+            {t('heading')}
           </h2>
           <p className="text-lg max-w-xl mx-auto" style={{ color: '#a0a0a0' }}>
-            No templates. No manual editing. Just upload and watch your content strategy build itself.
+            {t('description')}
           </p>
         </div>
 

@@ -19,6 +19,15 @@ CREATE TABLE profiles (
   preferred_language TEXT DEFAULT 'en' CHECK (preferred_language IN ('en', 'fr', 'es')),
   role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   onboarding_completed BOOLEAN DEFAULT false,
+  -- Brand & Social fields
+  brand_name TEXT,
+  brand_logo_url TEXT,
+  brand_color TEXT DEFAULT '#00d4ff',
+  linkedin_handle TEXT,
+  twitter_handle TEXT,
+  instagram_handle TEXT,
+  website_url TEXT,
+  default_tone TEXT DEFAULT 'analytical' CHECK (default_tone IN ('analytical', 'conversational', 'bold', 'corporate')),
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -342,3 +351,20 @@ CREATE POLICY "Users read own PDFs" ON storage.objects FOR SELECT TO authenticat
 
 CREATE POLICY "Users delete own PDFs" ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'pdfs' AND (storage.foldername(name))[1] = (SELECT auth.uid())::TEXT);
+
+-- Avatars / brand logos bucket (public, images only, 5MB limit)
+INSERT INTO storage.buckets (id, name, public, allowed_mime_types, file_size_limit)
+VALUES ('avatars', 'avatars', true, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'], 5242880)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Users upload own avatars" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'avatars' AND (storage.foldername(name))[1] = (SELECT auth.uid())::TEXT);
+
+CREATE POLICY "Anyone can view avatars" ON storage.objects FOR SELECT TO public
+  USING (bucket_id = 'avatars');
+
+CREATE POLICY "Users update own avatars" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = (SELECT auth.uid())::TEXT);
+
+CREATE POLICY "Users delete own avatars" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = (SELECT auth.uid())::TEXT);

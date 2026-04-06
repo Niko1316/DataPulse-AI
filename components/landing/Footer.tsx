@@ -19,11 +19,11 @@ export default function Footer() {
     {
       heading: t('product'),
       links: [
-        { label: 'Features', href: '/#features' },
-        { label: 'How It Works', href: '/#how-it-works' },
-        { label: 'Pricing', href: '/#pricing' },
-        { label: 'Changelog', href: '/changelog' },
-        { label: 'Roadmap', href: '/roadmap' },
+        { label: t('features'), href: '/#features' },
+        { label: t('howItWorks'), href: '/#how-it-works' },
+        { label: t('pricing'), href: '/#pricing' },
+        { label: t('changelog'), href: '/changelog' },
+        { label: t('roadmap'), href: '/roadmap' },
       ],
     },
     {
@@ -31,9 +31,9 @@ export default function Footer() {
       links: [
         { label: t('about'), href: '/about' },
         { label: t('blog'), href: '/blog' },
-        { label: 'Careers', href: '/careers' },
+        { label: t('careers'), href: '/careers' },
         { label: t('contact'), href: '/contact' },
-        { label: 'Status', href: 'https://status.datapulse.ai' },
+        { label: t('status'), href: 'https://status.datapulse.ai' },
       ],
     },
     {
@@ -41,9 +41,9 @@ export default function Footer() {
       links: [
         { label: t('terms'), href: '/terms' },
         { label: t('privacy'), href: '/privacy' },
-        { label: 'Cookie Policy', href: '/cookies' },
-        { label: 'GDPR', href: '/gdpr' },
-        { label: 'Data Processing', href: '/dpa' },
+        { label: t('cookiePolicy'), href: '/cookies' },
+        { label: t('gdpr'), href: '/gdpr' },
+        { label: t('dataProcessing'), href: '/dpa' },
       ],
     },
   ];
